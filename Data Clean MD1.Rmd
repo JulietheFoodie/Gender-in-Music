@@ -1,0 +1,55 @@
+---
+title: "Data Upload"
+author: "Julie Norman"
+date: "4/19/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Libraries
+```{r}
+library(ggplot2)
+library(dplyr)
+library(readr)
+```
+
+# Upload
+```{r}
+incomp_df <- read_csv("~/Downloads/music coding - Sheet1.csv")
+
+```
+
+#Add Proportion Columns
+```{r}
+incomp_df$prop_MF <- (incomp_df$`Man talking Women`)/(incomp_df$`Total Number of Lines`)
+
+incomp_df$prop_MNF <- (incomp_df$`Man not talking Women`)/(incomp_df$`Total Number of Lines`)
+
+incomp_df$prop_FM <- (incomp_df$`Women talking man`)/(incomp_df$`Total Number of Lines`)
+
+incomp_df$prop_FNM <- (incomp_df$`Women not talking Man`)/(incomp_df$`Total Number of Lines`)
+
+incomp_df$prop_RGN <- (incomp_df$`Romantic G Neutral`)/(incomp_df$`Total Number of Lines`)
+
+incomp_df$prop_SGN <- (incomp_df$`Sexual G neutral`)/(incomp_df$`Total Number of Lines`)
+
+colnames(incomp_df)
+
+```
+
+
+# DF for top 100 
+```{r}
+incomp100_df <- filter(incomp_df, !is.na(incomp_df$`Location in Top 100`))
+
+View(incomp100_df)
+```
+
+
+
+
+
+
