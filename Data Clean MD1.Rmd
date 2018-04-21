@@ -97,8 +97,7 @@ str(lmusic_df)
 
 ```
 
-```{r}
-```
+
 
 
 # stack prop by genre
@@ -111,19 +110,17 @@ ggplot() +
 
 ```
 
+# Gender Disparity by Genre
 ```{r}
 gendgenr_df <- data.frame(table(lmusic_df$`singer gender`, lmusic_df$genre))
 names(gendgenr_df) <- c("singer gender","genre","Count")
-#counts<- table(lmusic_df$`singer gender`, lmusic_df$genre)
-#counts
+
 
 ggplot(data=gendgenr_df, aes(x=genre, y=Count, fill=`singer gender`)) + 
   geom_bar(stat="identity") +
   scale_fill_manual(values=c("#9999FF", "#FFFF99", "#99FF66"))
 
-#ggplot() +
- # geom_bar(aes(y = counts, x = genre, fill = counts), data = lmusic_df, stat="identity") +
-#  scale_fill_manual(values=c("FF00CC", "#3300FF", "#9900FF"))
+
   
 
 ```
