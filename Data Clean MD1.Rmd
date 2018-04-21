@@ -15,6 +15,9 @@ library(ggplot2)
 library(dplyr)
 library(readr)
 library(tidyr)
+library(data.table)
+library(RColorBrewer)
+library(wesanderson)
 ```
 
 # Upload
@@ -46,7 +49,6 @@ colnames(music_df)
 ```{r}
 music100_df <- filter(music_df, !is.na(music_df$`Location in Top 100`))
 
-View(music100_df)
 ```
 
 # Graphs 
@@ -63,6 +65,8 @@ ggplot(music_df, aes(x = prop_MF)) +
 ```{r}
 lmusic_df <- music_df
 
+setnames(lmusic_df, old = c("prop_MF", "prop_MNF", "prop_FM", "prop_FNM", "prop_RGN", "prop_SGN"), new = c("prop_1", "prop_2", "prop_3", "prop_4", "prop_5", "prop_6"))
+
 lmusic_df$`Man not talking Women` <- NULL
 lmusic_df$`Man talking Women`<- NULL
 lmusic_df$`Women not talking Man` <- NULL
@@ -70,23 +74,10 @@ lmusic_df$`Women talking man` <- NULL
 lmusic_df$`Romantic G Neutral` <- NULL
 lmusic_df$`Sexual G neutral` <- NULL
 
-lmusic_df$prop_1 <- lmusic_df$prop_MF
-lmusic_df$prop_2 <- lmusic_df$prop_FM
-lmusic_df$prop_3 <- lmusic_df$prop_FNM
-lmusic_df$prop_4 <- lmusic_df$prop_MNF
-lmusic_df$prop_5 <- lmusic_df$prop_RGN
-lmusic_df$prop_6 <- lmusic_df$prop_SGN
-
-lmusic_df$prop_MF <- NULL
-lmusic_df$prop_FM <- NULL
-lmusic_df$prop_FNM <- NULL
-lmusic_df$prop_MNF <- NULL
-lmusic_df$prop_RGN <- NULL
-lmusic_df$prop_SGN <- NULL
-
-colnames(lmusic_df)
+str(lmusic_df)
 ```
 
+#Gather Data
 ```{r}
 # The arguments to gather():
 # - data: Data object
@@ -94,28 +85,46 @@ colnames(lmusic_df)
 # - value: Name of new value column
 # - ...: Names of source columns that contain values
 # - factor_key: Treat the new key column as a factor (instead of character vector)
-data_long <- gather(lmusic_df, prop, prop_values, prop_1:prop_6, factor_key=TRUE)
-data_long
+lmusic_df <- gather(lmusic_df, prop, prop_values, prop_1:prop_6, factor_key=TRUE)
 
-data_long$prop <- factor(data_long$prop, levels = c("prop_1", "prop_2", "prop_3", "prop_4", "prop_5", "prop_6"), labels = c("prop_MF", "prop_MNF", "prop_FM", "prop_FNM", "prop_RGN", "prop_SGN") )
+```
 
+# rename prop for identification 
+```{r}
+lmusic_df$prop <- revalue(lmusic_df$prop, c("prop_1" = "Men talk Woman", "prop_2" = "Men not talk Woman", "prop_3" = "Woman talk Men", "prop_4" = "Woman not talk Men", "prop_5" = "Romantic Gender Neutral", "prop_6" = "Sexual Gender Neutral"))
+
+str(lmusic_df)
 
 ```
 
 ```{r}
-colnames(music_df)
 ```
 
+
+# stack prop by genre
+```{r}
+
+ggplot() + 
+  geom_bar(aes(y = prop_values, x = genre, fill = prop), data = lmusic_df, stat="identity") +
+  scale_fill_manual(values=c("#99FFFF", "#FFFF99", "#99FF66", "#CC9966", "#9999FF", "#FF9966"))
+  
+
+```
 
 ```{r}
-theme_set(theme_bw())
+gendgenr_df <- data.frame(table(lmusic_df$`singer gender`, lmusic_df$genre))
+names(gendgenr_df) <- c("singer gender","genre","Count")
+#counts<- table(lmusic_df$`singer gender`, lmusic_df$genre)
+#counts
 
-ggplot(d, aes(Hours, Percentage)) +
-  geom_bar(stat = "identity") +
-  facet_wrap(~Task)
+ggplot(data=gendgenr_df, aes(x=genre, y=Count, fill=`singer gender`)) + 
+  geom_bar(stat="identity") +
+  scale_fill_manual(values=c("#9999FF", "#FFFF99", "#99FF66"))
 
+#ggplot() +
+ # geom_bar(aes(y = counts, x = genre, fill = counts), data = lmusic_df, stat="identity") +
+#  scale_fill_manual(values=c("FF00CC", "#3300FF", "#9900FF"))
+  
 
 ```
-
-
 
