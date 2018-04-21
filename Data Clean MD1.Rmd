@@ -14,44 +14,108 @@ knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(dplyr)
 library(readr)
+library(tidyr)
 ```
 
 # Upload
 ```{r}
-incomp_df <- read_csv("~/Downloads/music coding - Sheet1.csv")
-# Comment
+music_df <- read_csv("Gender in Music Data.csv")
+
 ```
 
 #Add Proportion Columns
 ```{r}
-incomp_df$prop_MF <- (incomp_df$`Man talking Women`)/(incomp_df$`Total Number of Lines`)
+music_df$prop_MF <- (music_df$`Man talking Women`)/(music_df$`Total Number of Lines`)
 
-incomp_df$prop_MNF <- (incomp_df$`Man not talking Women`)/(incomp_df$`Total Number of Lines`)
+music_df$prop_MNF <- (music_df$`Man not talking Women`)/(music_df$`Total Number of Lines`)
 
-incomp_df$prop_FM <- (incomp_df$`Women talking man`)/(incomp_df$`Total Number of Lines`)
+music_df$prop_FM <- (music_df$`Women talking man`)/(music_df$`Total Number of Lines`)
 
-incomp_df$prop_FNM <- (incomp_df$`Women not talking Man`)/(incomp_df$`Total Number of Lines`)
+music_df$prop_FNM <- (music_df$`Women not talking Man`)/(music_df$`Total Number of Lines`)
 
-incomp_df$prop_RGN <- (incomp_df$`Romantic G Neutral`)/(incomp_df$`Total Number of Lines`)
+music_df$prop_RGN <- (music_df$`Romantic G Neutral`)/(music_df$`Total Number of Lines`)
 
-incomp_df$prop_SGN <- (incomp_df$`Sexual G neutral`)/(incomp_df$`Total Number of Lines`)
+music_df$prop_SGN <- (music_df$`Sexual G neutral`)/(music_df$`Total Number of Lines`)
 
-colnames(incomp_df)
+colnames(music_df)
 
 ```
 
 
 # DF for top 100 
 ```{r}
-incomp100_df <- filter(incomp_df, !is.na(incomp_df$`Location in Top 100`))
+music100_df <- filter(music_df, !is.na(music_df$`Location in Top 100`))
 
-View(incomp100_df)
+View(music100_df)
 ```
 
 # Graphs 
 
+```{r}
+ggplot(music_df, aes(x = prop_MF)) +
+  geom_histogram() +
+  facet_grid(genre ~.) + 
+  stat_bin(bins = 8)
+```
+
+# Data Shaping
+
+```{r}
+lmusic_df <- music_df
+
+lmusic_df$`Man not talking Women` <- NULL
+lmusic_df$`Man talking Women`<- NULL
+lmusic_df$`Women not talking Man` <- NULL
+lmusic_df$`Women talking man` <- NULL
+lmusic_df$`Romantic G Neutral` <- NULL
+lmusic_df$`Sexual G neutral` <- NULL
+
+lmusic_df$prop_1 <- lmusic_df$prop_MF
+lmusic_df$prop_2 <- lmusic_df$prop_FM
+lmusic_df$prop_3 <- lmusic_df$prop_FNM
+lmusic_df$prop_4 <- lmusic_df$prop_MNF
+lmusic_df$prop_5 <- lmusic_df$prop_RGN
+lmusic_df$prop_6 <- lmusic_df$prop_SGN
+
+lmusic_df$prop_MF <- NULL
+lmusic_df$prop_FM <- NULL
+lmusic_df$prop_FNM <- NULL
+lmusic_df$prop_MNF <- NULL
+lmusic_df$prop_RGN <- NULL
+lmusic_df$prop_SGN <- NULL
+
+colnames(lmusic_df)
+```
+
+```{r}
+# The arguments to gather():
+# - data: Data object
+# - key: Name of new key column (made from names of data columns)
+# - value: Name of new value column
+# - ...: Names of source columns that contain values
+# - factor_key: Treat the new key column as a factor (instead of character vector)
+data_long <- gather(lmusic_df, prop, prop_values, prop_1:prop_6, factor_key=TRUE)
+data_long
+
+data_long$prop <- factor(data_long$prop, levels = c("prop_1", "prop_2", "prop_3", "prop_4", "prop_5", "prop_6"), labels = c("prop_MF", "prop_MNF", "prop_FM", "prop_FNM", "prop_RGN", "prop_SGN") )
 
 
+```
+
+```{r}
+colnames(music_df)
+```
+
+
+```{r}
+theme_set(theme_bw())
+
+ggplot(d, aes(Hours, Percentage)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~Task)
+
+
+```
 
 
 
