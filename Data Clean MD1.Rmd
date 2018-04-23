@@ -18,6 +18,8 @@ library(tidyr)
 library(data.table)
 library(RColorBrewer)
 library(wesanderson)
+
+library(gmodels)
 ```
 
 # Upload
@@ -115,13 +117,46 @@ ggplot() +
 gendgenr_df <- data.frame(table(lmusic_df$`singer gender`, lmusic_df$genre))
 names(gendgenr_df) <- c("singer gender","genre","Count")
 
-
 ggplot(data=gendgenr_df, aes(x=genre, y=Count, fill=`singer gender`)) + 
   geom_bar(stat="identity") +
   scale_fill_manual(values=c("#9999FF", "#FFFF99", "#99FF66"))
 
-
-  
-
 ```
+
+# Test for gender differences
+
+## Data Display
+
+```{r}
+CrossTable(music_df$`singer gender`, music_df$genre,
+expected = FALSE, prop.r = FALSE, prop.c = FALSE, prop.t = TRUE, prop.chisq = FALSE, chisq = TRUE)
+```
+
+```{r}
+gendgen_tb <- table(music_df$`singer gender`, music_df$genre)
+```
+
+```{r}
+chisq.test(gendgen_tb)
+```
+# Test by 
+
+```{r}
+CrossTable(lmusic_df$genre, lmusic_df$prop_values,
+expected = FALSE, prop.r = FALSE, prop.c = FALSE, prop.t = TRUE, prop.chisq = FALSE, chisq = TRUE)
+```
+
+```{r}
+genprop_tb <- table(lmusic_df$prop, lmusic_df$prop_values)
+genprop
+```
+
+```{r}
+chisq.test(genprop_tb)
+```
+
+```{r}
+write.csv(lmusic_df, file = "Export1.csv")
+```
+
 
