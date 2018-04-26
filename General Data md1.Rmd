@@ -1,0 +1,151 @@
+---
+title: "Data Upload"
+author: "Julie Norman"
+date: "4/19/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Libraries
+```{r}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(tidyr)
+library(data.table)
+library(RColorBrewer)
+library(wesanderson)
+
+library(gmodels)
+```
+
+
+# Upload
+```{r}
+music_df <- read_csv("~/Documents/HCUBE Project/Gender in Music Data.csv")
+
+```
+
+#Add Proportion Columns
+```{r}
+music_df$prop_MF <- (music_df$`Man talking Women`)/(music_df$`Total Number of Lines`)
+
+music_df$prop_MNF <- (music_df$`Man not talking Women`)/(music_df$`Total Number of Lines`)
+
+music_df$prop_FM <- (music_df$`Women talking man`)/(music_df$`Total Number of Lines`)
+
+music_df$prop_FNM <- (music_df$`Women not talking Man`)/(music_df$`Total Number of Lines`)
+
+music_df$prop_RGN <- (music_df$`Romantic G Neutral`)/(music_df$`Total Number of Lines`)
+
+music_df$prop_SGN <- (music_df$`Sexual G neutral`)/(music_df$`Total Number of Lines`)
+
+colnames(music_df)
+
+```
+
+
+# DF for top 100 
+```{r}
+music100_df <- filter(music_df, !is.na(music_df$`Location in Top 100`))
+
+```
+
+# Graphs 
+
+```{r}
+ggplot(music_df, aes(x = prop_MF)) +
+  geom_histogram() +
+  facet_grid(genre ~.) + 
+  stat_bin(bins = 8)
+```
+
+# Data Shaping
+
+```{r}
+lmusic_df <- music_df
+
+setnames(lmusic_df, old = c("prop_MF", "prop_MNF", "prop_FM", "prop_FNM", "prop_RGN", "prop_SGN"), new = c("prop_1", "prop_2", "prop_3", "prop_4", "prop_5", "prop_6"))
+
+lmusic_df$`Man not talking Women` <- NULL
+lmusic_df$`Man talking Women`<- NULL
+lmusic_df$`Women not talking Man` <- NULL
+lmusic_df$`Women talking man` <- NULL
+lmusic_df$`Romantic G Neutral` <- NULL
+lmusic_df$`Sexual G neutral` <- NULL
+
+```
+
+#Gather Data
+```{r}
+# The arguments to gather():
+# - data: Data object
+# - key: Name of new key column (made from names of data columns)
+# - value: Name of new value column
+# - ...: Names of source columns that contain values
+# - factor_key: Treat the new key column as a factor (instead of character vector)
+lmusic_df <- gather(lmusic_df, prop, prop_values, prop_1:prop_6, factor_key=TRUE)
+
+```
+
+# rename prop for identification 
+```{r}
+lmusic_df$prop <- revalue(lmusic_df$prop, c("prop_1" = "Men talk Woman", "prop_2" = "Men not talk Woman", "prop_3" = "Woman talk Men", "prop_4" = "Woman not talk Men", "prop_5" = "Romantic Gender Neutral", "prop_6" = "Sexual Gender Neutral"))
+
+```
+
+
+
+
+# stack prop by genre
+```{r}
+
+ggplot() + 
+  geom_bar(aes(y = prop_values, x = genre, fill = prop), data = lmusic_df, stat="identity") +
+  scale_fill_manual(values=c("#99FFFF", "#FFFF99", "#99FF66", "#CC9966", "#9999FF", "#FF9966"))
+  
+
+```
+
+# Gender Disparity by Genre
+```{r}
+gendgenr_df <- data.frame(table(lmusic_df$`singer gender`, lmusic_df$genre))
+names(gendgenr_df) <- c("singer gender","genre","Count")
+
+ggplot(data=gendgenr_df, aes(x=genre, y=Count, fill=`singer gender`)) + 
+  geom_bar(stat="identity") +
+  scale_fill_manual(values=c("#9999FF", "#FFFF99", "#99FF66"))
+
+```
+
+# Test for gender differences
+
+
+```{r}
+gendgen_tb <- table(music_df$`singer gender`, music_df$genre)
+```
+
+```{r}
+chisq.test(gendgen_tb)
+```
+
+
+```{r}
+genprop_tb <- table(lmusic_df$prop, lmusic_df$prop_values)
+
+```
+
+```{r}
+chisq.test(genprop_tb)
+```
+
+```{r}
+write.csv(lmusic_df, file = "~/Documents/HCUBE Project/ExportLong.csv")
+```
+
+```{r}
+write.csv(music_df, file = "~/Documents/HCUBE Project/ExportWide.csv")
+```

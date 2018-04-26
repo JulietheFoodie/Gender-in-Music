@@ -1,0 +1,118 @@
+---
+title: "DFs for Genre"
+author: "Julie Norman"
+date: "4/21/2018"
+output: html_document
+---
+
+
+```{r}
+lmusic_df2 <- read_csv("~/Documents/HCUBE Project/ExportLong.csv")
+
+
+```
+
+# Create Data Sets
+
+```{r}
+rap_df <- filter(lmusic_df2, genre == "RapCaviar")
+trap_df <- filter(lmusic_df2, genre == "Trap Land")
+rock_df <- filter(lmusic_df2, genre == "Rock This")
+kpop_df <- filter(lmusic_df2, genre == "K-Pop")
+folk_df <- filter(lmusic_df2, genre == "Fresh Folk")
+christ_df <- filter(lmusic_df2, genre == "Christian Hits")
+country_df <- filter(lmusic_df2, genre == "Hot Country")
+indie_df <- filter(lmusic_df2, genre == "Ultimate Indie")
+
+```
+
+
+# RapCaviar
+
+```{r}
+CrossTable(rap_df$prop, rap_df$prop_values,
+expected = FALSE, prop.r = FALSE, prop.c = FALSE, prop.t = TRUE, prop.chisq = FALSE, chisq = TRUE)
+```
+
+```{r}
+rapprop_tb <- table(rap_df$prop, rap_df$prop_values)
+```
+
+```{r}
+chisq.test(rapprop_tb)
+```
+
+# Trap Land
+
+```{r}
+trapprop_tb <- table(trap_df$prop, trap_df$prop_values)
+```
+
+```{r}
+chisq.test(trapprop_tb)
+```
+
+# Rock This
+
+```{r}
+rockprop_tb <- table(rock_df$prop, rock_df$prop_values)
+```
+
+```{r}
+chisq.test(rockprop_tb)
+```
+
+# K-Pop
+
+```{r}
+kprop_tb <- table(kpop_df$prop, kpop_df$prop_values)
+```
+
+```{r}
+chisq.test(kprop_tb)
+```
+
+# Fresh Folk
+
+```{r}
+folkprop_tb <- table(folk_df$prop, folk_df$prop_values)
+```
+
+```{r}
+chisq.test(folkprop_tb)
+```
+
+# Christian Hits
+
+```{r}
+christprop_tb <- table(christ_df$prop, christ_df$prop_values)
+```
+
+```{r}
+chisq.test(christprop_tb)
+```
+
+# Hot Country
+
+```{r}
+countryprop_tb <- table(country_df$prop, country_df$prop_values)
+```
+
+```{r}
+chisq.test(countryprop_tb)
+```
+
+# Ultimate Indie
+
+```{r}
+indieprop_tb <- table(indie_df$prop, indie_df$prop_values)
+```
+
+```{r}
+chisq.test(indieprop_tb)
+```
+
+
+
+
+

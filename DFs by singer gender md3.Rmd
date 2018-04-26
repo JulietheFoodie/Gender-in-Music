@@ -1,0 +1,69 @@
+---
+title: "DFs by Gender"
+author: "Julie Norman"
+date: "4/25/2018"
+output: html_document
+---
+
+```{r}
+lmusic_df2 <- read_csv("ExportLong.csv")
+wmusic_df <- read_csv("ExportWide.csv")
+```
+
+
+#Wide Data by Singer
+```{r}
+wmale_df <- filter(wmusic_df, `singer gender` == "Male")
+wfem_df <- filter(wmusic_df, `singer gender` == "Female")
+wboth_df <- filter(wmusic_df, `singer gender` == "Both")
+```
+
+# Wide data edit
+```{r}
+
+```
+
+
+# Graphics display
+
+## Male Singers
+
+```{r}
+lmale_df$fprop <- factor(lmale_df$prop)
+```
+
+
+```{r}
+ggplot() + 
+  geom_bar(aes(y = prop_values, x = prop, fill = prop), data = lmale_df, stat="identity") +
+  scale_fill_manual(values=c("#99FFFF", "#FFFF99", "#99FF66", "#CC9966", "#9999FF", "#FF9966")) +
+  ggtitle("Content Distribution for Male Singers")
+  
+```
+
+## Female Singers
+
+```{r}
+ggplot() + 
+  geom_bar(aes(y = prop_values, x = prop, fill = prop), data = lfem_df, stat="identity") +
+  scale_fill_manual(values=c("#99FFFF", "#FFFF99", "#99FF66", "#CC9966", "#9999FF", "#FF9966")) +
+  ggtitle("Content Distribution for Female Singers")
+  
+```
+
+## Mixed Gender Duet
+
+```{r}
+ggplot() + 
+  geom_bar(aes(y = prop_values, x = prop, fill = prop), data = lboth_df, stat="identity") +
+  scale_fill_manual(values=c("#99FFFF", "#FFFF99", "#99FF66", "#CC9966", "#9999FF", "#FF9966")) +
+  ggtitle("Content Distribution for Mixed Singers")
+  
+```
+
+#Long Data by Singer
+```{r}
+lmale_df <- filter(lmusic_df2, `singer gender` == "Male")
+lfem_df <- filter(lmusic_df2, `singer gender` == "Female")
+lboth_df <- filter(lmusic_df2, `singer gender` == "Both")
+```
