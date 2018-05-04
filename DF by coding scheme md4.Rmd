@@ -1,0 +1,38 @@
+---
+title: "DF by coding scheme"
+author: "Julie Norman"
+date: "4/26/2018"
+output: html_document
+---
+
+```{r}
+library(brms)
+library(readr)
+library(dplyr)
+```
+
+
+```{r}
+lmusic_df2 <- read_csv("ExportLong.csv")
+wmusic_df <- read_csv("ExportWide.csv")
+```
+
+# Create Data Sets
+
+```{r}
+MTW_df <- filter(lmusic_df2, prop_type == "Men talk Woman")
+MNTW_df <- filter(lmusic_df2, prop_type == "Men not talk Woman")
+WTM_df <- filter(lmusic_df2, prop_type == "Woman talk Men")
+WNTM_df <- filter(lmusic_df2, prop_type == "Woman not talk Men")
+RGN_df <- filter(lmusic_df2, prop_type == "Romantic Gender Neutral")
+SGEN_df <- filter(lmusic_df2, prop_type == "Sexual Gender Neutral")
+
+```
+
+```{r}
+MTW_mod <- brm(prop_values ~ genre, data = MTW_df, family = "categorical")
+```
+
+
+
+

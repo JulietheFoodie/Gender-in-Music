@@ -10,6 +10,35 @@ lmusic_df2 <- read_csv("ExportLong.csv")
 wmusic_df <- read_csv("ExportWide.csv")
 ```
 
+# Gender Disparity by Genre
+```{r}
+gendgenr_df <- data.frame(table(lmusic_df2$`singer gender`, lmusic_df2$genre))
+names(gendgenr_df) <- c("singer gender","genre","Count")
+
+ggplot(data=gendgenr_df, aes(x=genre, y=Count, fill=`singer gender`)) + 
+  geom_bar(stat="identity") +
+  scale_fill_manual(values=c("#9999FF", "#FFFF99", "#99FF66"))
+
+```
+
+# Test for gender differences
+
+
+```{r}
+gendgen_tb <- table(lmusic_df2$`singer gender`, lmusic_df2$genre)
+gendgen_tb
+```
+
+```{r}
+chisq.test(gendgen_tb)
+```
+
+#Long Data by Singer
+```{r}
+lmale_df <- filter(lmusic_df2, `singer gender` == "Male")
+lfem_df <- filter(lmusic_df2, `singer gender` == "Female")
+lboth_df <- filter(lmusic_df2, `singer gender` == "Both")
+```
 
 #Wide Data by Singer
 ```{r}
@@ -18,8 +47,26 @@ wfem_df <- filter(wmusic_df, `singer gender` == "Female")
 wboth_df <- filter(wmusic_df, `singer gender` == "Both")
 ```
 
-# Wide data edit
+# Rename Prop for Wide
+
 ```{r}
+# Male
+#setnames(wmale_df, "prop_1", "prop_MF")
+#setnames(wmale_df, "prop_2", "prop_MNF")
+#setnames(wmale_df, "prop_3", "prop_FM")
+#setnames(wmale_df, "prop_4", "prop_FNM")
+#setnames(wmale_df, "prop_5", "prop_RGN")
+#setnames(wmale_df, "prop_6", "prop_SGN")
+
+
+
+#Both
+#setnames(wboth_df, "prop_1", "prop_MF")
+#setnames(wboth_df, "prop_2", "prop_MNF")
+#setnames(wboth_df, "prop_3", "prop_FM")
+#setnames(wboth_df, "prop_4", "prop_FNM")
+#setnames(wboth_df, "prop_5", "prop_RGN")
+#setnames(wboth_df, "prop_6", "prop_SGN")
 
 ```
 
@@ -29,13 +76,13 @@ wboth_df <- filter(wmusic_df, `singer gender` == "Both")
 ## Male Singers
 
 ```{r}
-lmale_df$fprop <- factor(lmale_df$prop)
+lmale_df$fprop <- factor(lmale_df$prop_type)
 ```
 
 
 ```{r}
 ggplot() + 
-  geom_bar(aes(y = prop_values, x = prop, fill = prop), data = lmale_df, stat="identity") +
+  geom_bar(aes(y = prop_values, x = prop_type, fill = prop_type), data = lmale_df, stat="identity") +
   scale_fill_manual(values=c("#99FFFF", "#FFFF99", "#99FF66", "#CC9966", "#9999FF", "#FF9966")) +
   ggtitle("Content Distribution for Male Singers")
   
@@ -45,7 +92,7 @@ ggplot() +
 
 ```{r}
 ggplot() + 
-  geom_bar(aes(y = prop_values, x = prop, fill = prop), data = lfem_df, stat="identity") +
+  geom_bar(aes(y = prop_values, x = prop_type, fill = prop_type), data = lfem_df, stat="identity") +
   scale_fill_manual(values=c("#99FFFF", "#FFFF99", "#99FF66", "#CC9966", "#9999FF", "#FF9966")) +
   ggtitle("Content Distribution for Female Singers")
   
@@ -55,15 +102,30 @@ ggplot() +
 
 ```{r}
 ggplot() + 
-  geom_bar(aes(y = prop_values, x = prop, fill = prop), data = lboth_df, stat="identity") +
+  geom_bar(aes(y = prop_values, x = prop_type, fill = prop_type), data = lboth_df, stat="identity") +
   scale_fill_manual(values=c("#99FFFF", "#FFFF99", "#99FF66", "#CC9966", "#9999FF", "#FF9966")) +
   ggtitle("Content Distribution for Mixed Singers")
   
 ```
 
-#Long Data by Singer
-```{r}
-lmale_df <- filter(lmusic_df2, `singer gender` == "Male")
-lfem_df <- filter(lmusic_df2, `singer gender` == "Female")
-lboth_df <- filter(lmusic_df2, `singer gender` == "Both")
-```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
